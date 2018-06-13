@@ -15,7 +15,7 @@ class BandSerializer(ModelSerializer):
         read_only_fields = ['author', 'albums']
 
 #Album Serializer
-class AlbumSerialier(ModelSerializer):
+class AlbumSerializer(ModelSerializer):
     tracks = serializers.ListField(read_only=True)
 
     class Meta:

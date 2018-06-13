@@ -16,10 +16,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from record_app.views import BandListCreateAPIView, BandDetailAPIView
+
+
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
+    path('bands/', BandListCreateAPIView.as_view()),
+    path('bands/<int:pk>', BandDetailAPIView.as_view()),
 ]

@@ -18,7 +18,7 @@ class Band(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     def albums(self):
-        from app.serializers import AlbumSerializer
+        from record_app.serializers import AlbumSerializer
 
         serialized_albums = AlbumSerializer(self.album_set, many=True)
         return serialized_albums.data
@@ -37,10 +37,10 @@ class Album(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     def tracks(self):
-        from app.serializers import TrackSerializer
+        from record_app.serializers import TrackSerializer
 
         serialized_tracks = TrackSerializer(self.track_set, many=True)
-        return serialized_tracks
+        return serialized_tracks.data
 
     def __str__(self):
         return self.title
