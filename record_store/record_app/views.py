@@ -17,6 +17,9 @@ from record_app.permissions import IsOwnerOrReadOnly
 class BandListCreateAPIView(APIView):
     def get(self, request):
         all_bands = Band.objects.all()
+        query = self.request.query_params.get('band_name', None)
+        if query != None:
+            all_bands = all_bands.filter(band_name=query)
         serialized_bands = BandSerializer(all_bands, many=True)
         return Response(serialized_bands.data, 200)
 
@@ -85,6 +88,9 @@ class AlbumRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 class TrackListCreateAPIView(APIView):
     def get(self, request):
         all_tracks = Track.objects.all()
+        query = self.request.query_params.get('title', None)
+        if query != None:
+            all_tracks = all_tracks.filter(title=query)
         serialized_tracks = TrackSerializer(all_tracks, many=True)
         return Response(serialized_tracks.data, 200)
 
