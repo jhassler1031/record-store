@@ -17,7 +17,8 @@ from django.contrib import admin
 from django.urls import path, include
 
 from record_app.views import BandListCreateAPIView, BandDetailAPIView, \
-                            AlbumListCreateAPIView, AlbumRetrieveUpdateDestroyAPIView
+                            AlbumListCreateAPIView, AlbumRetrieveUpdateDestroyAPIView, \
+                            TrackListCreateAPIView, TrackDetailAPIView
 
 
 
@@ -30,4 +31,6 @@ urlpatterns = [
     path('bands/<int:pk>', BandDetailAPIView.as_view()),
     path('albums/', AlbumListCreateAPIView.as_view()),
     path('albums/<int:pk>', AlbumRetrieveUpdateDestroyAPIView.as_view()),
+    path('tracks/', TrackListCreateAPIView.as_view()),
+    path('tracks/<int:pk>', TrackDetailAPIView.as_view()),
 ]

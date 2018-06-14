@@ -12,7 +12,7 @@ from record_app.permissions import IsOwnerOrReadOnly
 
 # Create your views here.
 
-#Band Views
+#Band Views=========================================================
 class BandListCreateAPIView(APIView):
     def get(self, request):
         all_bands = Band.objects.all()
@@ -57,6 +57,8 @@ class BandDetailAPIView(APIView):
         return Response("", 204)
 
     #Need search view
+
+#Album Views ======================================================
 class AlbumListCreateAPIView(generics.ListCreateAPIView):
     permission_classes = [IsOwnerOrReadOnly]
     queryset = Album.objects.all()
@@ -69,3 +71,48 @@ class AlbumRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsOwnerOrReadOnly]
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer
+
+    #Need search view
+
+#Track Views ========================================================
+class TrackListCreateAPIView(APIView):
+    def get(self, request):
+        all_tracks = Track.objects.all()
+        serialized_tracks = TrackSerializer(all_tracks, many=True)
+        return Response(serialized_tracks.data, 200)
+
+    def post(self, request):
+        title = request.POST["title"]
+        album_id = request.POST["album"]
+        author = self.request.user
+
+        new_track = Track.objects.create(title=title, album_id=album_id, author=author)
+        serialized_track = TrackSerializer(new_track)
+        return Response(serialized_track.data, 201)
+
+class TrackDetailAPIView(APIView):
+    permission_classes = [IsOwnerOrReadOnly]
+    
+    def get(self, request, pk):
+        track = Track.objects.get(id=pk)
+        serialized_track = TrackSerializer(track)
+        return Response(serialized_track.data, 200)
+
+    def put(self, request, pk):
+        track = Track.objects.get(id=pk)
+        self.check_object_permissions(request, track)
+        track.title = request.POST["title"]
+        track.album_id = request.POST["album"]
+        track.author = self.request.user
+        track.save()
+
+        serialized_track = TrackSerializer(track)
+        return Response(serialized_track.data, 200)
+
+    def delete(self, request, pk):
+        track = Track.objects.get(id=pk)
+        self.check_object_permissions(request, track)
+        track.delete()
+        return Response("", 204)
+
+    #need search view
