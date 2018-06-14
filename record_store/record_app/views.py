@@ -20,7 +20,7 @@ class BandListCreateAPIView(APIView):
         return Response(serialized_bands.data, 200)
 
     def post(self, request):
-        band_name = requests.POST["band_name"]
+        band_name = request.POST["band_name"]
         genre = request.POST["genre"]
         city_origin = request.POST["city_origin"]
         year_formed = request.POST["year_formed"]
@@ -55,3 +55,17 @@ class BandDetailAPIView(APIView):
         self.check_object_permissions(request, band)
         band.delete()
         return Response("", 204)
+
+    #Need search view
+class AlbumListCreateAPIView(generics.ListCreateAPIView):
+    permission_classes = [IsOwnerOrReadOnly]
+    queryset = Album.objects.all()
+    serializer_class = AlbumSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(author = self.request.user)
+
+class AlbumRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsOwnerOrReadOnly]
+    queryset = Album.objects.all()
+    serializer_class = AlbumSerializer

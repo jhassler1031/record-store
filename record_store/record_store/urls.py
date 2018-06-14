@@ -16,7 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from record_app.views import BandListCreateAPIView, BandDetailAPIView
+from record_app.views import BandListCreateAPIView, BandDetailAPIView, \
+                            AlbumListCreateAPIView, AlbumRetrieveUpdateDestroyAPIView
 
 
 
@@ -27,4 +28,6 @@ urlpatterns = [
     path('auth/', include('djoser.urls.authtoken')),
     path('bands/', BandListCreateAPIView.as_view()),
     path('bands/<int:pk>', BandDetailAPIView.as_view()),
+    path('albums/', AlbumListCreateAPIView.as_view()),
+    path('albums/<int:pk>', AlbumRetrieveUpdateDestroyAPIView.as_view()),
 ]
