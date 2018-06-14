@@ -5,6 +5,7 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
+from django_filters.rest_framework import DjangoFilterBackend
 
 from record_app.models import Band, Album, Track
 from record_app.serializers import BandSerializer, AlbumSerializer, TrackSerializer
@@ -61,8 +62,14 @@ class BandDetailAPIView(APIView):
 #Album Views ======================================================
 class AlbumListCreateAPIView(generics.ListCreateAPIView):
     permission_classes = [IsOwnerOrReadOnly]
-    queryset = Album.objects.all()
     serializer_class = AlbumSerializer
+
+    def get_queryset(self):
+        queryset = Album.objects.all()
+        query = self.request.query_params.get('title', None)
+        if query != None:
+            queryset = queryset.filter(title=query)
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save(author = self.request.user)
@@ -92,7 +99,7 @@ class TrackListCreateAPIView(APIView):
 
 class TrackDetailAPIView(APIView):
     permission_classes = [IsOwnerOrReadOnly]
-    
+
     def get(self, request, pk):
         track = Track.objects.get(id=pk)
         serialized_track = TrackSerializer(track)

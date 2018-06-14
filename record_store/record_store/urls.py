@@ -30,6 +30,7 @@ urlpatterns = [
     path('bands/', BandListCreateAPIView.as_view()),
     path('bands/<int:pk>', BandDetailAPIView.as_view()),
     path('albums/', AlbumListCreateAPIView.as_view()),
+    #path('albums/?q=parameter', AlbumListCreateAPIView.as_view()),
     path('albums/<int:pk>', AlbumRetrieveUpdateDestroyAPIView.as_view()),
     path('tracks/', TrackListCreateAPIView.as_view()),
     path('tracks/<int:pk>', TrackDetailAPIView.as_view()),
