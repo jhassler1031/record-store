@@ -19,7 +19,7 @@ class BandListCreateAPIView(APIView):
         all_bands = Band.objects.all()
         query = self.request.query_params.get('band_name', None)
         if query != None:
-            all_bands = all_bands.filter(band_name=query)
+            all_bands = all_bands.filter(band_name__icontains=query)
         serialized_bands = BandSerializer(all_bands, many=True)
         return Response(serialized_bands.data, 200)
 
@@ -60,8 +60,6 @@ class BandDetailAPIView(APIView):
         band.delete()
         return Response("", 204)
 
-    #Need search view
-
 #Album Views ======================================================
 class AlbumListCreateAPIView(generics.ListCreateAPIView):
     permission_classes = [IsOwnerOrReadOnly]
@@ -71,7 +69,7 @@ class AlbumListCreateAPIView(generics.ListCreateAPIView):
         queryset = Album.objects.all()
         query = self.request.query_params.get('title', None)
         if query != None:
-            queryset = queryset.filter(title=query)
+            queryset = queryset.filter(title__icontains=query)
         return queryset
 
     def perform_create(self, serializer):
@@ -82,15 +80,13 @@ class AlbumRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer
 
-    #Need search view
-
 #Track Views ========================================================
 class TrackListCreateAPIView(APIView):
     def get(self, request):
         all_tracks = Track.objects.all()
         query = self.request.query_params.get('title', None)
         if query != None:
-            all_tracks = all_tracks.filter(title=query)
+            all_tracks = all_tracks.filter(title__icontains=query)
         serialized_tracks = TrackSerializer(all_tracks, many=True)
         return Response(serialized_tracks.data, 200)
 
@@ -127,5 +123,3 @@ class TrackDetailAPIView(APIView):
         self.check_object_permissions(request, track)
         track.delete()
         return Response("", 204)
-
-    #need search view
