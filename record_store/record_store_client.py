@@ -104,7 +104,6 @@ Press <enter> to go back
                 else:
                     band_url = url + band_id
                     band = requests.get(band_url).json()
-                #For just a search, print info =======
                 if band_input == "2":
                     display_band(band)
                 #Update a band =========================
@@ -120,7 +119,7 @@ Press <enter> to go back
                 elif band_input == "5":
                     requests.delete(band_url, headers={"Authorization": "token " + user})
 
-# Start of Album =============================================================
+# Start of Album Menu =============================================================
 def album_menu(url, user):
     while True:
         print("""
@@ -152,7 +151,6 @@ Press <enter> to go back
         #Go back =================================
         elif album_input == "":
             break
-        #Ask for the band name to search =========
         else:
             search_results = search(url + "?title=")
             if search_results != None:
@@ -164,10 +162,9 @@ Press <enter> to go back
                 else:
                     album_url = url + album_id
                     album = requests.get(album_url).json()
-            #For just a search, print info =======
                 if album_input == "2":
                     display_album(album)
-                #Update a band =========================
+                #Update an album =========================
                 elif album_input == "4":
                     title = input("Title: ")
                     genre = input("Genre: ")
@@ -178,7 +175,7 @@ Press <enter> to go back
                     requests.put(album_url,
                     data={"title":title, "genre": genre, "release_year": release_year, "notes": notes, "band": band},
                     headers={"Authorization": "token " + user})
-                #Delete a band =========================
+                #Delete an album =========================
                 elif album_input == "5":
                     requests.delete(album_url, headers={"Authorization": "token " + user})
 
@@ -195,12 +192,12 @@ What would you like to do?
 Press <enter> to go back
 """)
         track_input = input("> ")
-        #Show all bands ==========================
+        #Show all tracks ==========================
         if track_input == "1":
             tracks = requests.get(url).json()
             for track in tracks:
                 display_track(track)
-        #Add a band===============================
+        #Add a track ===============================
         elif track_input == "3":
             title = input("Title: ")
             album = input("Album ID: ")
@@ -224,7 +221,7 @@ Press <enter> to go back
                     track = requests.get(track_url).json()
                 if track_input == "2":
                     display_track(track)
-                #Update an album =========================
+                #Update a track =========================
                 elif track_input == "4":
                     title = input("Title: ")
                     album = input("Album ID: ")
@@ -232,7 +229,7 @@ Press <enter> to go back
                     requests.put(track_url,
                     data={"title":title, "album": album},
                     headers={"Authorization": "token " + user})
-                #Delete an album =========================
+                #Delete a track =========================
                 elif track_input == "5":
                     requests.delete(track_url, headers={"Authorization": "token " + user})
 
