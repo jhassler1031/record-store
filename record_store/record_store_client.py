@@ -5,10 +5,11 @@ bands_url = "http://localhost:8000/bands/"
 albums_url = "http://localhost:8000/albums/"
 tracks_url = "http://localhost:8000/tracks/"
 login_url = "http://localhost:8000/auth/token/create/"
+logout_url = "http://localhost:8000/auth/token/destroy/"
 
 #Start Functions
 
-#Login
+# Login/logout ========================================================================
 def login(url):
     username = input("Username: ")
     password = input("Password: ")
@@ -16,7 +17,10 @@ def login(url):
     auth_token = auth_token["auth_token"]
     return auth_token
 
-#Search for something ==============================
+def logout(url, user):
+    requests.post(url, headers={"Authorization": "token " + user})
+
+#Search for something =========================================================
 def search(url):
     while True:
         search = input("Enter query or press <enter> to go back: ")
@@ -30,6 +34,7 @@ def search(url):
         else:
             return search_items
 
+# Display functions for each model to be used in sub menus ====================
 def display_band(band):
     print(f"""
 Band Name: {band["band_name"]}
@@ -50,14 +55,14 @@ Band ID: {album["band"]}
 """)
 
 def display_track(track):
-    print("""
+    print(f"""
 ID: {track["id"]}
 Title: {track["title"]}
 Album ID: {track["album"]}
     """)
 
 
-#Sub menu for band options ======================
+#Sub menu for band options ===================================================
 def band_menu(url, user):
     while True:
         print("""
@@ -88,7 +93,6 @@ Press <enter> to go back
         #Go back =================================
         elif band_input == "":
             break
-        #Ask for the band name to search =========
         else:
             search_results = search(url + "?band_name=")
             if search_results != None:
@@ -100,7 +104,7 @@ Press <enter> to go back
                 else:
                     band_url = url + band_id
                     band = requests.get(band_url).json()
-            #For just a search, print info =======
+                #For just a search, print info =======
                 if band_input == "2":
                     display_band(band)
                 #Update a band =========================
@@ -116,6 +120,7 @@ Press <enter> to go back
                 elif band_input == "5":
                     requests.delete(band_url, headers={"Authorization": "token " + user})
 
+# Start of Album =============================================================
 def album_menu(url, user):
     while True:
         print("""
@@ -128,12 +133,12 @@ What would you like to do?
 Press <enter> to go back
 """)
         album_input = input("> ")
-        #Show all bands ==========================
+        #Show all albums ==========================
         if album_input == "1":
             albums = requests.get(url).json()
             for album in albums:
                 display_album(album)
-        #Add a band===============================
+        #Add an album ===============================
         elif album_input == "3":
             title = input("Title: ")
             genre = input("Genre: ")
@@ -177,7 +182,59 @@ Press <enter> to go back
                 elif album_input == "5":
                     requests.delete(album_url, headers={"Authorization": "token " + user})
 
+# Start of Track Menu =========================================================
+def track_menu(url, user):
+    while True:
+        print("""
+What would you like to do?
+1) Show all tracks
+2) Search for a track
+3) Add a track
+4) Edit a track
+5) Delete a track
+Press <enter> to go back
+""")
+        track_input = input("> ")
+        #Show all bands ==========================
+        if track_input == "1":
+            tracks = requests.get(url).json()
+            for track in tracks:
+                display_track(track)
+        #Add a band===============================
+        elif track_input == "3":
+            title = input("Title: ")
+            album = input("Album ID: ")
 
+            requests.post(url,
+            data={"title":title, "album": album},
+            headers={"Authorization": "token " + user})
+        #Go back =================================
+        elif track_input == "":
+            break
+        else:
+            search_results = search(url + "?title=")
+            if search_results != None:
+                for track in search_results:
+                    display_track(track)
+                track_id = input("Enter the ID # to select or press <enter> to go back: ")
+                if track_id == "":
+                    break
+                else:
+                    track_url = url + track_id
+                    track = requests.get(track_url).json()
+                if track_input == "2":
+                    display_track(track)
+                #Update an album =========================
+                elif track_input == "4":
+                    title = input("Title: ")
+                    album = input("Album ID: ")
+
+                    requests.put(track_url,
+                    data={"title":title, "album": album},
+                    headers={"Authorization": "token " + user})
+                #Delete an album =========================
+                elif track_input == "5":
+                    requests.delete(track_url, headers={"Authorization": "token " + user})
 
 
 #Start Program
@@ -189,7 +246,7 @@ Choose a section:
 1) Bands
 2) Albums
 3) Tracks
-Press <enter> to exit
+Press <enter> to logout
 """)
     main_input = input("> ")
     if main_input == "1":
@@ -199,4 +256,5 @@ Press <enter> to exit
     elif main_input == "3":
         track_menu(tracks_url, user)
     else:
+        logout(logout_url, user)
         break
