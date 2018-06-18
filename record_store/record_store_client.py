@@ -6,6 +6,33 @@ albums_url = "http://localhost:8000/albums/"
 tracks_url = "http://localhost:8000/tracks/"
 
 #Start Functions
+
+#Search for a band ==============================
+def search(url):
+    while True:
+        search = input("Enter query or press <enter> to go back: ")
+        if search == "":
+            return None
+        else:
+            search_item = requests.get(url + search).json()
+
+        if search_item != []:
+            return search_item
+        else:
+            print("No search results found")
+
+#Search sub menu
+def get_item_url(url):
+    item_id = input("Enter ID of entry to modify or Press <enter> to go back: ")
+    if user_input == "":
+        break
+    else:
+        item_url = url + item_id
+        return item_url
+
+
+
+#Sub menu for band options ======================
 def band_menu(url):
     while True:
         print("""
@@ -24,6 +51,7 @@ Press <enter> to go back
             for band in bands:
                 print(f"""
 Band Name: {band["band_name"]}
+ID: {band["id"]}
 Genre: {band["genre"]}
 City Origin: {band["city_origin"]}
 Year Formed: {band["year_formed"]}
@@ -37,32 +65,32 @@ Year Formed: {band["year_formed"]}
 
             request.post(url, data={"band_name":band_name, "genre": genre, "city_origin": city_origin, "year_formed": year_formed})
         #Go back =================================
-        elif band_input == "3":
+        elif band_input == "":
             break
         #Ask for the band name to search =========
         else:
-            search_band = input("Name of the band: ")
-            band = requests.get(url + "?band_name=" + search_band).json()
-            print(type(band))
-            band_url = url + band["id"]
+            bands = search(url + "?band_name=")
+            if bands != None:
             #For just a search, print info =======
-            if band_input == "2":
-                print(f"""
+                if band_input == "2":
+                    for band in bands:
+                        print(f"""
+ID: {band["id"]}
 Band Name: {band["band_name"]}
 Genre: {band["genre"]}
 City Origin: {band["city_origin"]}
 Year Formed: {band["year_formed"]}
 """)
-            #Update a band =========================
-            elif band_input == "4":
-                band.band_name = input("Band name: ")
-                band.genre = input("Genre: ")
-                band.city_origin = input("City Origin: ")
-                band.year_formed = input("Year formed: ")
-                request.put(band_url, data={"band_name":band_name, "genre": genre, "city_origin": city_origin, "year_formed": year_formed})
-            #Delete a band =========================
-            elif band_input == "5":
-                requests.delete(band_url)
+                #Update a band =========================
+                elif band_input == "4":
+                    band.band_name = input("Band name: ")
+                    band.genre = input("Genre: ")
+                    band.city_origin = input("City Origin: ")
+                    band.year_formed = input("Year formed: ")
+                    request.put(band_url, data={"band_name":band_name, "genre": genre, "city_origin": city_origin, "year_formed": year_formed})
+                #Delete a band =========================
+                elif band_input == "5":
+                    requests.delete(band_url)
 
 
 #Start Program
