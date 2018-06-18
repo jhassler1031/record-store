@@ -1,11 +1,7 @@
 #API CLI client for record store
 import requests
 
-bands_url = "http://localhost:8000/bands/"
-albums_url = "http://localhost:8000/albums/"
-tracks_url = "http://localhost:8000/tracks/"
-login_url = "http://localhost:8000/auth/token/create/"
-logout_url = "http://localhost:8000/auth/token/destroy/"
+url = "http://localhost:8000/"
 
 #Start Functions
 
@@ -13,12 +9,12 @@ logout_url = "http://localhost:8000/auth/token/destroy/"
 def login(url):
     username = input("Username: ")
     password = input("Password: ")
-    auth_token = requests.post(url, data={"username": username, "password": password}).json()
+    auth_token = requests.post(url + "auth/token/create/", data={"username": username, "password": password}).json()
     auth_token = auth_token["auth_token"]
     return auth_token
 
 def logout(url, user):
-    requests.post(url, headers={"Authorization": "token " + user})
+    requests.post(url + "auth/token/destroy/", headers={"Authorization": "token " + user})
 
 #Search for something =========================================================
 def search(url):
@@ -235,7 +231,7 @@ Press <enter> to go back
 
 
 #Start Program
-user = login(login_url)
+user = login(url)
 
 while True:
     print("""
@@ -247,11 +243,11 @@ Press <enter> to logout
 """)
     main_input = input("> ")
     if main_input == "1":
-        band_menu(bands_url, user)
+        band_menu(url + "bands/", user)
     elif main_input == "2":
-        album_menu(albums_url, user)
+        album_menu(url + "albums/", user)
     elif main_input == "3":
-        track_menu(tracks_url, user)
+        track_menu(url + "tracks/", user)
     else:
-        logout(logout_url, user)
+        logout(url, user)
         break
